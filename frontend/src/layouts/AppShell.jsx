@@ -1,78 +1,144 @@
-import { motion } from "framer-motion";
-
 import {
-  HeartPulse,
+  LayoutDashboard,
+  Mic,
   Bell,
-  Activity,
-  ShieldAlert,
+  BarChart3,
+  House,
+  HeartPulse,
 } from "lucide-react";
 
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import MobileBottomNav from "../components/MobileBottomNav";
+
+const navItems = [
+  {
+    label: "Home",
+    icon: House,
+    path: "/",
+  },
+
+  {
+    label: "Voice",
+    icon: Mic,
+    path: "/voice",
+  },
+
+  {
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    path: "/dashboard",
+  },
+
+  {
+    label: "Alerts",
+    icon: Bell,
+    path: "/alerts",
+  },
+
+  {
+    label: "Analytics",
+    icon: BarChart3,
+    path: "/analytics",
+  },
+];
+
 function AppShell({ children }) {
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
   return (
-    <div className="min-h-screen bg-[#fffaf7] text-neutral-900">
+    <div className="min-h-screen bg-[#f8f5f2]">
 
-      {/* DESKTOP LAYOUT */}
-      <div className="hidden lg:grid lg:grid-cols-[280px_1fr_340px] min-h-screen">
+      {/* DESKTOP */}
+      <div className="hidden lg:flex">
 
-        {/* LEFT SIDEBAR */}
-        <aside className="border-r border-neutral-200/70 bg-white/60 backdrop-blur-xl p-6 flex flex-col">
+        {/* SIDEBAR */}
+        <aside className="w-[290px] min-h-screen bg-white/70 backdrop-blur-xl border-r border-white/40 p-6 flex flex-col">
 
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
+          {/* BRAND */}
+          <div className="flex items-center gap-4 mb-10">
 
-            <h1 className="text-3xl font-bold text-[#e77b67]">
-              SakhiAI
-            </h1>
+            <div className="w-14 h-14 rounded-3xl bg-gradient-to-br from-[#ea816c] to-[#df6b57] flex items-center justify-center shadow-lg">
 
-            <p className="text-sm text-neutral-500 mt-2 leading-relaxed">
-              AI healthcare intelligence
-              for rural communities.
-            </p>
+              <HeartPulse
+                size={28}
+                className="text-white"
+              />
 
-          </motion.div>
+            </div>
+
+            <div>
+
+              <h1 className="text-2xl font-bold">
+                SakhiAI
+              </h1>
+
+              <p className="text-sm text-neutral-500">
+                Rural Healthcare AI
+              </p>
+
+            </div>
+
+          </div>
 
           {/* NAV */}
-          <div className="mt-12 flex flex-col gap-3">
+          <div className="flex flex-col gap-3">
 
-            <div className="bg-[#fff3ef] text-[#df6b57] rounded-2xl p-4 font-medium">
-              Dashboard
-            </div>
+            {navItems.map((item) => {
+              const Icon = item.icon;
 
-            <div className="rounded-2xl p-4 hover:bg-neutral-100 transition cursor-pointer">
-              Screenings
-            </div>
+              const active =
+                location.pathname ===
+                item.path;
 
-            <div className="rounded-2xl p-4 hover:bg-neutral-100 transition cursor-pointer">
-              Alerts
-            </div>
+              return (
+                <button
+                  key={item.path}
+                  onClick={() =>
+                    navigate(item.path)
+                  }
+                  className={`
+                    flex items-center gap-4
+                    px-5 py-4 rounded-2xl
+                    transition-all duration-300
+                    text-left
+                    ${
+                      active
+                        ? "bg-gradient-to-r from-[#ea816c] to-[#df6b57] text-white shadow-lg"
+                        : "hover:bg-[#f5f2ef] text-neutral-700"
+                    }
+                  `}
+                >
 
-            <div className="rounded-2xl p-4 hover:bg-neutral-100 transition cursor-pointer">
-              Analytics
-            </div>
+                  <Icon size={22} />
+
+                  <span className="font-medium">
+                    {item.label}
+                  </span>
+
+                </button>
+              );
+            })}
 
           </div>
 
-          {/* SIDEBAR STATS */}
-          <div className="mt-auto space-y-4">
+          {/* FOOTER */}
+          <div className="mt-auto">
 
-            <div className="bg-gradient-to-br from-[#eb7d68] to-[#df6b57] rounded-3xl p-5 text-white shadow-lg">
+            <div className="rounded-[2rem] bg-gradient-to-br from-[#fff1ed] to-[#fff7f4] p-5">
 
-              <div className="flex items-center gap-3">
-                <HeartPulse size={22} />
-                <p className="font-medium">
-                  Active Monitoring
-                </p>
-              </div>
+              <h3 className="font-semibold">
+                AI Healthcare Assistant
+              </h3>
 
-              <h2 className="text-4xl font-bold mt-5">
-                24
-              </h2>
-
-              <p className="text-sm text-white/80 mt-1">
-                screenings today
+              <p className="text-sm text-neutral-500 mt-2 leading-relaxed">
+                Supporting ASHA workers
+                with voice-based screening.
               </p>
 
             </div>
@@ -81,88 +147,28 @@ function AppShell({ children }) {
 
         </aside>
 
-        {/* MAIN CONTENT */}
-        <main className="overflow-y-auto min-h-screen">
-          <div className="w-full max-w-5xl mx-auto p-8">
+        {/* MAIN */}
+        <main className="flex-1 overflow-y-auto min-h-screen">
+
+          <div className="max-w-7xl mx-auto p-8">
             {children}
           </div>
+
         </main>
 
-        {/* RIGHT PANEL */}
-        <aside className="border-l border-neutral-200/70 bg-white/50 backdrop-blur-xl p-6">
-
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">
-              Live Alerts
-            </h2>
-
-            <Bell
-              size={20}
-              className="text-[#df6b57]"
-            />
-          </div>
-
-          <div className="mt-6 flex flex-col gap-4">
-
-            <div className="bg-[#fff1ed] rounded-3xl p-5 border border-[#ffd7cf]">
-
-              <div className="flex items-center gap-3">
-                <ShieldAlert
-                  size={20}
-                  className="text-[#db6548]"
-                />
-
-                <span className="text-sm font-semibold text-[#db6548]">
-                  HIGH RISK
-                </span>
-              </div>
-
-              <p className="mt-4 font-medium leading-relaxed">
-                Pregnancy-related hypertension indicators detected.
-              </p>
-
-              <p className="text-sm text-neutral-500 mt-2">
-                2 mins ago
-              </p>
-
-            </div>
-
-            <div className="bg-white rounded-3xl p-5 border border-neutral-200">
-
-              <div className="flex items-center gap-3">
-                <Activity
-                  size={20}
-                  className="text-[#2d9b7f]"
-                />
-
-                <span className="text-sm font-semibold text-[#2d9b7f]">
-                  ACTIVE SCREENINGS
-                </span>
-              </div>
-
-              <h2 className="text-4xl font-bold mt-5">
-                18
-              </h2>
-
-              <p className="text-sm text-neutral-500 mt-2">
-                currently monitored
-              </p>
-
-            </div>
-
-          </div>
-
-        </aside>
-
       </div>
 
-      {/* MOBILE LAYOUT */}
+      {/* MOBILE */}
       <div className="lg:hidden min-h-screen w-full">
-        <div className="w-full max-w-md mx-auto min-h-screen">
+
+        <div className="w-full max-w-md mx-auto min-h-screen pb-28">
           {children}
         </div>
+
       </div>
-        <MobileBottomNav />
+
+      <MobileBottomNav />
+
     </div>
   );
 }
