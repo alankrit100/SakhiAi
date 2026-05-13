@@ -149,19 +149,33 @@ function VoiceScreen() {
           {/* MIC */}
           <div className="relative flex items-center justify-center">
 
-            {status === STATES.RECORDING && (
-              <motion.div
-                animate={{
-                  scale: [1, 1.3],
-                  opacity: [0.4, 0],
-                }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 2,
-                }}
-                className="absolute w-72 h-72 rounded-full bg-[#ea816c]"
-              />
-            )}
+            {status === STATES.PROCESSING && (
+  <>
+
+    <motion.div
+      animate={{
+        rotate: 360,
+      }}
+      transition={{
+        repeat: Infinity,
+        duration: 2,
+        ease: "linear",
+      }}
+      className="mx-auto w-24 h-24 rounded-full border-[6px] border-[#ffe1d8] border-t-[#df6b57]"
+    />
+
+    <h1 className="text-5xl font-bold mt-10">
+      AI Analyzing
+    </h1>
+
+    <p className="mt-4 text-neutral-500 leading-relaxed">
+      Processing patient symptoms,
+      generating healthcare insights,
+      and evaluating risk levels.
+    </p>
+
+  </>
+)}
 
             <motion.button
               whileTap={{

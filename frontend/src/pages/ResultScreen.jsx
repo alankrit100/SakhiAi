@@ -4,243 +4,295 @@ import {
   AlertTriangle,
   ShieldCheck,
   Activity,
-  ArrowLeft,
+  Brain,
+  AudioLines,
 } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import AppShell from "../layouts/AppShell";
 
 import { Card } from "@/components/ui/card";
 
-import { Button } from "@/components/ui/button";
-
 function ResultScreen() {
-  const navigate = useNavigate();
+  const { state } = useLocation();
 
-  const location = useLocation();
+  const result = state;
 
-  const data = location.state;
-
-  if (!data) {
+  if (!result) {
     return (
       <AppShell>
+
         <div className="p-10">
-          No result data found.
+          No result found.
         </div>
+
       </AppShell>
     );
   }
 
-  const {
-    transcript,
-    aiResponse,
-    riskData,
-  } = data;
+  const ai =
+    result.aiResponse || {};
 
-  const riskLevel =
-    aiResponse?.risk_level ||
-    riskData?.riskLevel ||
-    "UNKNOWN";
+  const risk =
+    ai.risk_level || "LOW";
 
-  const warningSigns =
-    aiResponse?.warning_signs || [];
+  const riskStyles = {
+    HIGH: {
+      bg: "from-[#fff1ed] to-[#fff8f6]",
+      text: "text-[#df6b57]",
+      badge: "bg-[#df6b57]",
+      icon: AlertTriangle,
+    },
+
+    MEDIUM: {
+      bg: "from-[#fff9ef] to-[#fffdf9]",
+      text: "text-[#dd8a28]",
+      badge: "bg-[#dd8a28]",
+      icon: Activity,
+    },
+
+    LOW: {
+      bg: "from-[#eef8f5] to-[#f8fffc]",
+      text: "text-[#2d9b7f]",
+      badge: "bg-[#2d9b7f]",
+      icon: ShieldCheck,
+    },
+  };
+
+  const current =
+    riskStyles[risk];
+
+  const Icon =
+    current.icon;
 
   return (
     <AppShell>
 
-      <div className="max-w-4xl mx-auto py-10 px-4">
+      <div className="space-y-8">
 
-        {/* TOP */}
-        <div className="flex items-center justify-between mb-8">
-
-          <button
-            onClick={() => navigate("/")}
-            className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center"
-          >
-            <ArrowLeft size={20} />
-          </button>
-
-          <div className="text-right">
-            <h2 className="font-semibold">
-              Screening Result
-            </h2>
-
-            <p className="text-sm text-neutral-500">
-              AI healthcare assessment
-            </p>
-          </div>
-
-        </div>
-
-        {/* RISK CARD */}
-        <Card
-          className={`
-            rounded-[2rem]
-            border-0
-            shadow-xl
-            p-8
-            text-white
-            ${
-              riskLevel === "HIGH"
-                ? "bg-gradient-to-br from-[#e56b57] to-[#d94d39]"
-                : riskLevel === "MEDIUM"
-                ? "bg-gradient-to-br from-[#e7a14e] to-[#dd8a28]"
-                : "bg-gradient-to-br from-[#35a37d] to-[#248866]"
-            }
-          `}
+        {/* HEADER */}
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: -20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
         >
 
-          <div className="flex items-center gap-4">
+          <h1 className="text-4xl font-bold">
+            AI Screening Result
+          </h1>
 
-            <div className="bg-white/20 p-4 rounded-3xl">
-
-              {riskLevel === "HIGH" ? (
-                <AlertTriangle size={34} />
-
-              ) : (
-                <ShieldCheck size={34} />
-              )}
-
-            </div>
-
-            <div>
-              <p className="text-white/80 text-sm">
-                Risk Assessment
-              </p>
-
-              <h1 className="text-5xl font-bold mt-1">
-                {riskLevel}
-              </h1>
-            </div>
-
-          </div>
-
-          <p className="mt-8 text-lg leading-relaxed text-white/90">
-            {
-              aiResponse?.possible_concern
-            }
+          <p className="text-neutral-500 mt-2">
+            Voice-based healthcare analysis summary.
           </p>
 
-        </Card>
+        </motion.div>
+
+        {/* HERO */}
+        <motion.div
+          initial={{
+            opacity: 0,
+            scale: 0.96,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+        >
+
+          <Card
+            className={`
+              rounded-[2.5rem]
+              border-0
+              shadow-xl
+              overflow-hidden
+              bg-gradient-to-br
+              ${current.bg}
+              p-8
+            `}
+          >
+
+            <div className="flex items-center justify-between gap-6 flex-wrap">
+
+              <div className="flex items-center gap-5">
+
+                <div className="w-20 h-20 rounded-[2rem] bg-white shadow-md flex items-center justify-center">
+
+                  <Icon
+                    size={38}
+                    className={
+                      current.text
+                    }
+                  />
+
+                </div>
+
+                <div>
+
+                  <div
+                    className={`
+                      inline-flex
+                      px-4 py-1
+                      rounded-full
+                      text-white
+                      text-sm
+                      font-semibold
+                      ${current.badge}
+                    `}
+                  >
+                    {risk} RISK
+                  </div>
+
+                  <h2 className="text-3xl font-bold mt-4">
+                    {
+                      ai.possible_concern
+                    }
+                  </h2>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </Card>
+
+        </motion.div>
 
         {/* GRID */}
-        <div className="grid lg:grid-cols-2 gap-6 mt-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
           {/* TRANSCRIPT */}
-          <Card className="rounded-[2rem] border-0 shadow-sm p-6">
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+          >
 
-            <div className="flex items-center gap-3">
+            <Card className="rounded-[2rem] border-0 shadow-sm p-6 h-full">
 
-              <div className="bg-[#fff1ed] p-3 rounded-2xl">
-                <Activity
-                  size={20}
-                  className="text-[#df6b57]"
-                />
+              <div className="flex items-center gap-3 mb-5">
+
+                <div className="bg-[#eef4ff] p-3 rounded-2xl">
+
+                  <AudioLines
+                    size={22}
+                    className="text-[#4d78ff]"
+                  />
+
+                </div>
+
+                <h2 className="text-2xl font-semibold">
+                  Transcript
+                </h2>
+
               </div>
 
-              <h2 className="text-xl font-semibold">
-                Transcript
-              </h2>
+              <p className="text-neutral-600 leading-relaxed text-lg">
+                {result.transcript}
+              </p>
 
-            </div>
+            </Card>
 
-            <p className="mt-6 text-neutral-600 leading-relaxed">
-              {transcript}
-            </p>
+          </motion.div>
 
-          </Card>
+          {/* AI RESPONSE */}
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+          >
 
-          {/* ACTION */}
-          <Card className="rounded-[2rem] border-0 shadow-sm p-6">
+            <Card className="rounded-[2rem] border-0 shadow-sm p-6 h-full">
 
-            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mb-5">
 
-              <div className="bg-[#eef8f5] p-3 rounded-2xl">
-                <ShieldCheck
-                  size={20}
-                  className="text-[#2d9b7f]"
-                />
+                <div className="bg-[#fff1ed] p-3 rounded-2xl">
+
+                  <Brain
+                    size={22}
+                    className="text-[#df6b57]"
+                  />
+
+                </div>
+
+                <h2 className="text-2xl font-semibold">
+                  AI Guidance
+                </h2>
+
               </div>
 
-              <h2 className="text-xl font-semibold">
-                Recommended Action
-              </h2>
+              <p className="text-neutral-600 leading-relaxed text-lg">
+                {
+                  ai.response_for_user
+                }
+              </p>
 
-            </div>
+            </Card>
 
-            <p className="mt-6 text-neutral-600 leading-relaxed">
-              {
-                aiResponse?.recommended_action
-              }
-            </p>
-
-          </Card>
+          </motion.div>
 
         </div>
 
         {/* WARNING SIGNS */}
-        <Card className="rounded-[2rem] border-0 shadow-sm p-6 mt-8">
+        {ai.warning_signs &&
+          ai.warning_signs.length >
+            0 && (
 
-          <h2 className="text-2xl font-semibold">
-            Warning Signs
-          </h2>
-
-          <div className="flex flex-wrap gap-3 mt-6">
-
-            {warningSigns.map(
-              (item, index) => (
-                <div
-                  key={index}
-                  className="bg-[#fff1ed] text-[#dc694f] px-4 py-2 rounded-full text-sm font-medium"
-                >
-                  {item}
-                </div>
-              )
-            )}
-
-          </div>
-
-        </Card>
-
-        {/* USER RESPONSE */}
-        <Card className="rounded-[2rem] border-0 shadow-sm p-6 mt-8">
-
-          <h2 className="text-2xl font-semibold">
-            Response For Patient
-          </h2>
-
-          <p className="mt-6 text-neutral-600 leading-relaxed text-lg">
-            {
-              aiResponse?.response_for_user
-            }
-          </p>
-
-        </Card>
-
-        {/* ACTION BUTTONS */}
-        <div className="flex gap-4 mt-10">
-
-          <Button
-            onClick={() =>
-              navigate("/voice")
-            }
-            className="rounded-2xl h-12 px-6"
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
           >
-            New Screening
-          </Button>
 
-          <Button
-            variant="outline"
-            onClick={() =>
-              navigate("/")
-            }
-            className="rounded-2xl h-12 px-6"
-          >
-            Back Home
-          </Button>
+            <Card className="rounded-[2rem] border-0 shadow-sm p-6">
 
-        </div>
+              <h2 className="text-2xl font-semibold mb-5">
+                Warning Signs
+              </h2>
+
+              <div className="flex flex-wrap gap-3">
+
+                {ai.warning_signs.map(
+                  (
+                    sign,
+                    index
+                  ) => (
+                    <div
+                      key={index}
+                      className="px-4 py-2 rounded-full bg-[#fff1ed] text-[#df6b57] font-medium"
+                    >
+                      {sign}
+                    </div>
+                  )
+                )}
+
+              </div>
+
+            </Card>
+
+          </motion.div>
+        )}
 
       </div>
 
